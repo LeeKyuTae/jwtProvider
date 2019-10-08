@@ -8,10 +8,9 @@ import jwtprovider.demo.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping(produces = MediaTypes.HAL_JSON_UTF8_VALUE)
@@ -31,4 +30,19 @@ public class AccountController {
         AccountResource accountResource = new AccountResource(account);
         return ResponseEntity.ok(accountResource);
     }
+
+
+    @CrossOrigin("*")
+    @GetMapping("/hello")
+    public String Hello(){
+       return "Hello";
+    }
+
+    @CrossOrigin("*")
+    @PostMapping("/why")
+    public String Why(@RequestBody String value, HttpServletResponse response){
+        return value;
+    }
+
+
 }
