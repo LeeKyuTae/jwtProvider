@@ -33,6 +33,7 @@ public class LoginController {
     @Autowired
     KakaoService kakaoService;
 
+    @CrossOrigin("*")
     @PostMapping("/oauth/login/kakao")
     public ResponseEntity kakaoLogin(@RequestBody KakoAccessToken kakaoAccess_token, HttpServletResponse response ) {
        // String access_token = kakaoService.getAccessToken(code);
