@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -96,12 +97,13 @@ public class JwtService {
 
     public Long getAccountId(){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String jwt = request.getHeader("Authorization");
+        String jwt = request.getHeader("authorization");
 
+        String token = getJwtFromRequest(jwt);
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(jwtSecret)
-                    .parseClaimsJws(jwt)
+                    .parseClaimsJws(token)
                     .getBody();
             return Long.parseLong(claims.getSubject());
         } catch (Exception e) {
@@ -112,6 +114,13 @@ public class JwtService {
             }
             throw new UnauthorizedException();
         }
+    }
+
+    private String getJwtFromRequest(String token ) {
+        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return null;
     }
 
 }

@@ -3,13 +3,16 @@ package jwtprovider.demo.controller;
 
 import jwtprovider.demo.domain.Account;
 import jwtprovider.demo.domain.AccountResource;
+import jwtprovider.demo.error.UnauthorizedException;
 import jwtprovider.demo.service.AccountService;
 import jwtprovider.demo.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
@@ -40,8 +43,23 @@ public class AccountController {
 
     @CrossOrigin("*")
     @PostMapping("/why")
-    public String Why(@RequestBody String value, HttpServletResponse response){
-        return value;
+    public String Why(@RequestBody String value, @RequestHeader(value = "Authorization") String request ){
+        String token =getJwtFromRequest(request);
+        System.out.println("QWE: " + token);
+
+        if(token != null && jwtService.validateToken(token)){
+            return value;
+        }else{
+            throw new UnauthorizedException(token);
+        }
+    }
+
+    private String getJwtFromRequest(String request) {
+        String bearerToken = request;
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7, bearerToken.length());
+        }
+        return null;
     }
 
 
